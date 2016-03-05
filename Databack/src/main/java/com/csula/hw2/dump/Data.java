@@ -6,14 +6,14 @@ import com.mongodb.*;
 import java.util.*;
 
 public class Data {
-    MongoClient con = null;
+    private MongoClient con = null;
     private String hostname = "localhost";
     private int portnum = 27017;
     private String dbname = "crawler";
-    DB db = null;
-    DBCollection doc;
-    DBCollection link;
-    DBCollection meta;
+    private DB db = null;
+    private DBCollection doc;
+    private DBCollection link;
+    private DBCollection meta;
 
     public Data() {
         connect();
