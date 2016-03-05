@@ -1,0 +1,53 @@
+apply plugin: 'java'
+
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.mongodb:mongo-java-driver:3.2.1'
+
+    compile 'com.google.code.gson:gson:2.6.1'
+
+    compile 'org.apache.tika:tika-core:1.11'
+
+    compile 'org.apache.tika:tika-parsers:1.11'
+
+}
+
+
+jar {
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    manifest {
+        attributes 'Main-Class': 'com.csula.hw2.dump.DumpCrawler',
+                    'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+    }
+    archiveName 'data_dump.jar'
+}
+
+task makejar( type: Copy ) {
+    into "$buildDir/libs/lib"
+    from configurations.runtime
+}
+
+jar {
+    dependsOn makejar
+}
+
+task hello(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.csula.hw2.dump.DumpCrawler'
+    // simple defensive programming to define optional arguments
+    if (project.hasProperty("arguments")) {
+        args arguments.split(" ")
+    }
+}
+
+task readFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'edu.csula.cs454.example.FileRead'
+}
