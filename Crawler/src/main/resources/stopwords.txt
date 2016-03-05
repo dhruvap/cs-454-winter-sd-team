@@ -605,6 +605,7 @@ whither
 who
 who'd
 whoever
+whomsoever
 whole
 who'll
 whom

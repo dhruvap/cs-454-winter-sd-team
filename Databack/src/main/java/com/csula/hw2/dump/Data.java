@@ -77,11 +77,6 @@ public class Data {
         return list;
     }
 
-
-
-
-
-
     public static Data getObject(){
         return new Data();
     }

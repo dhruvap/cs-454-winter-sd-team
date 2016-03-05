@@ -1,9 +1,5 @@
 package com.csula.hw3.tfidf;
 
-/**
- * Created by Satyam Soni on 2/26/2016.
- */
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

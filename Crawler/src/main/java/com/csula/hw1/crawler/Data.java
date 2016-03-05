@@ -11,12 +11,12 @@ public class Data {
     private String hostname = "localhost";
     private int portnum = 27017;
     private String dbname = "crawler";
-    DB db = null;
-    DBCollection doc;
-    DBCollection terms;
-    DBCollection termsInv;
-    DBCollection link;
-    DBCollection meta;
+    private DB db = null;
+    private DBCollection doc;
+    private DBCollection terms;
+    private DBCollection termsInv;
+    private DBCollection link;
+    private DBCollection meta;
 
     public Data() {
         connect();
