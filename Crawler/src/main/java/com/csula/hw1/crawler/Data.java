@@ -87,7 +87,7 @@ public class Data {
 
     }
 
-    public void addToPageRankIndx(String word, int cnt, String doc){
+    public void addToPageRankIndx(String word, int cnt, String doc, int totalLink){
 
         BasicDBObject o = new BasicDBObject();
         o.put("link", word);
@@ -100,6 +100,8 @@ public class Data {
 
         BasicDBObject docToInsert = new BasicDBObject("docid", doc);
         docToInsert.put("cnt", cnt);
+		docToInsert.put("totalLinks", totalLink);
+
         BasicDBObject updateQuery = new BasicDBObject("link", word);
         BasicDBObject updateCommand = new BasicDBObject("$push", new BasicDBObject("doc", docToInsert));
         termsInv.update(updateQuery, updateCommand);

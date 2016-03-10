@@ -130,7 +130,7 @@ public class ResourceCrawler implements Callable<CrawlResult> {
                     try {
                         Set<Map.Entry<String, Integer>> indexRes = Indexer.crawlAndIndexPageRank(res, inputBean).entrySet();
                         for (Map.Entry<String, Integer> e : indexRes) {
-                            data.addToPageRankIndx(e.getKey(), e.getValue(), res.getId());
+                            data.addToPageRankIndx(e.getKey(), e.getValue(), res.getId(), res.getParsedResource().size());
                         }
                     }catch (Exception ex){
                         ex.printStackTrace();
