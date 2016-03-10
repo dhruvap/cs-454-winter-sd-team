@@ -11,12 +11,12 @@ public class Data {
     private String hostname = "localhost";
     private int portnum = 27017;
     private String dbname = "crawler";
-    private DB db = null;
-    private DBCollection doc;
-    private DBCollection terms;
-    private DBCollection termsInv;
-    private DBCollection link;
-    private DBCollection meta;
+    DB db = null;
+    DBCollection doc;
+    DBCollection terms;
+    DBCollection termsInv;
+    DBCollection link;
+    DBCollection meta;
 
     public Data() {
         connect();
@@ -95,15 +95,18 @@ public class Data {
         if(res == null){
             BasicDBObject db = new BasicDBObject("link", word);
             db.put("doc", new ArrayList());
+            //db.put("score", 0.0);
             termsInv.insert(db);
         }
 
         BasicDBObject docToInsert = new BasicDBObject("docid", doc);
         docToInsert.put("cnt", cnt);
-		docToInsert.put("totalLinks", totalLink);
-		docToInsert.put("currentRank", (double)1 * cnt / totalLink);
+        docToInsert.put("totalLinks", totalLink);
+        docToInsert.put("current", (double)1 * cnt / totalLink);
 
 
+
+        //docToInsert.put("score", (double)1 * cnt / totalLink);
         BasicDBObject updateQuery = new BasicDBObject("link", word);
         BasicDBObject updateCommand = new BasicDBObject("$push", new BasicDBObject("doc", docToInsert));
         termsInv.update(updateQuery, updateCommand);
@@ -140,13 +143,19 @@ public class Data {
     public List<ScoreFactor> getAllPRLinksForScoring(){
         List<ScoreFactor> res =new ArrayList<ScoreFactor>();
         DBCursor cursor = termsInv.find();
+        double totalRank = 0.0;
         while(cursor.hasNext()){
 
             DBObject o = cursor.next();
             String term = (String) o.get("link");
             BasicDBList docs = (BasicDBList) o.get("doc");
             int cnt = docs.size();
-            res.add(new ScoreFactor(term, cnt));
+            for(Object m : docs){
+                if(((Map)m).get("current")!= null){
+                    totalRank += Double.parseDouble(((Map)m).get("current").toString());
+                }
+            }
+            res.add(new ScoreFactor(term, cnt, totalRank));
 
         }
         return res;
