@@ -5,9 +5,25 @@ public class ScoreFactor {
 
     private int count = 0;
 
+    private double  rank = 0d;
+
     public ScoreFactor(String term, int count) {
         this.term = term;
         this.count = count;
+    }
+
+    public ScoreFactor(String term, int count, double rank) {
+        this.term = term;
+        this.count = count;
+        this.rank = rank;
+    }
+
+    public double getRank() {
+        return rank;
+    }
+
+    public void setRank(double rank) {
+        this.rank = rank;
     }
 
     public String getTerm() {

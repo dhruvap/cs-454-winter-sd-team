@@ -101,6 +101,8 @@ public class Data {
         BasicDBObject docToInsert = new BasicDBObject("docid", doc);
         docToInsert.put("cnt", cnt);
 		docToInsert.put("totalLinks", totalLink);
+		docToInsert.put("currentRank", (double)1 * cnt / totalLink);
+
 
         BasicDBObject updateQuery = new BasicDBObject("link", word);
         BasicDBObject updateCommand = new BasicDBObject("$push", new BasicDBObject("doc", docToInsert));

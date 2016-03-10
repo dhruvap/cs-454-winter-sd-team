@@ -1,6 +1,5 @@
 package com.csula.hw3.indexer;
 
-
 import com.csula.hw1.crawler.CrawlResult;
 import com.csula.hw1.crawler.Data;
 import com.csula.hw1.crawler.InputBean;
@@ -113,7 +112,8 @@ public class Indexer {
             long totalDoc = data.getTotalDocs();
             List<ScoreFactor> terms = data.getAllPRLinksForScoring();
             for(ScoreFactor e : terms){
-                double idf = calculateIdf(totalDoc, e.getCount());
+                //double idf = calculateIdf(totalDoc, e.getCount());
+                double idf = e.getRank()/ e.getCount();
                 data.addScorePRIndx(e.getTerm(), idf);
             }
 
