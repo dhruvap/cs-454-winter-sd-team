@@ -1,0 +1,9 @@
+<html>
+<body>
+<h2>Search</h2>
+<br/>
+<%
+    response.sendRedirect("Search.html");
+%>
+</body>
+</html>
