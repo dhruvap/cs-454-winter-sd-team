@@ -32,6 +32,7 @@ public class SearchServlet {
         if(query != null && !query.trim().isEmpty()){
             String[] toSuggest = query.trim().split(" ");
 
+			//to suggest for last word.
             List<String> res= data.searchSuggest(toSuggest[toSuggest.length-1]);
             List<SuggestResult> sr =new ArrayList<SuggestResult>();
             for(String s : res){
@@ -125,8 +126,14 @@ public class SearchServlet {
 
 
                 for(Data.SearchResult e : finRes){
-                    e.link = data.getLink(e.docId);
+				String link = data.getLink(e.docId);
+					if(link != null && !link.isEmpty()){
+						e.link = link;
+					}
+                     
                 }
+				
+				
 
 
 
