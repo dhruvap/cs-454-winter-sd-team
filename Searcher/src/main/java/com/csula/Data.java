@@ -118,10 +118,7 @@ public class Data {
 
     public List<String> searchSuggest(String word){
         BasicDBObject searchQuery = new BasicDBObject("term", "/.*"+word+".*/");
-       // BasicDBObject searchQuery = new BasicDBObject();
-        //searchQuery.put("term",
-          //      new BasicDBObject("$regex","/"+word+"/")
-       //                 .append("$options", "i"));
+     
 
         DBObject A = QueryBuilder.start("term").is(Pattern.compile(word,
                 Pattern.CASE_INSENSITIVE)).get();
@@ -147,6 +144,10 @@ public class Data {
         return o.get("url").toString();
     }
 
+	public Double getScore(String link, String docId){
+        DBObject o  = termInv.findOne(new BasicDBObject("doc.docid", docId));
+        return Double.parseDouble(o.get("score").toString());
+    }
 
 
 }
