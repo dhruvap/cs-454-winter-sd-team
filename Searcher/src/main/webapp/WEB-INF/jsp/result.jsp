@@ -25,6 +25,15 @@
     });
 
 
+    $('.previewLink').on('focus', preview())
+
+    function preview(link){
+        $('#preview').html('<iframe src="'+link+'" height="600px" width="600px"> </iframe>');
+    }
+
+    function unpreview(){
+        $('#preview').html('');
+    }
 
     $(document).ready(function(){
         $("#tags").keyup(function(){
@@ -73,6 +82,9 @@
     <input type="submit" value="search"/>
 
 </form>
+<div id="preview" style="position: absolute; left :600px; top:10px; height:700px; width:100%;">
+
+</div>
 <%
     List<Data.SearchResult> res = (List<Data.SearchResult>) request.getAttribute("res");
     if(res != null){
@@ -82,7 +94,22 @@
 <%
         for(Data.SearchResult e : res){
         %>
-            <tr><td><a href="#"><%=e.link%></a></td></tr><br/>
+            <tr><td>
+                <a class="previewLink"  onblur="unpreview()" href="#"><%=e.link%></a> ( <%=e.score%> )
+                <br/>
+                <button onclick="preview('<%=e.link%>')">Preview</button>
+                <button onclick="unpreview()">Close Preview</button><br/>
+                Other Tags Leading this search :<br/>
+                <div style="width: 500px;display :block;">
+                <%
+                    for(String tag : e.otherTags){
+                        %>
+                    <span style=";color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
+                <%
+                    }
+                %>
+                </div>
+            </td></tr><br/>
             <%
 
         }
