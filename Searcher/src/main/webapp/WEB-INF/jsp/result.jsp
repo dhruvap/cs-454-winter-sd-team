@@ -99,12 +99,12 @@
                 <br/>
                 <button onclick="preview('<%=e.link%>')">Preview</button>
                 <button onclick="unpreview()">Close Preview</button><br/>
-                Other Tags Leading this search :<br/>
+                Other Top 20 Tags Leading this search :<br/>
                 <div style="width: 500px;display :block;">
                 <%
                     for(String tag : e.otherTags){
                         %>
-                    <span style=";color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
+                    <span style="color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
                 <%
                     }
                 %>
