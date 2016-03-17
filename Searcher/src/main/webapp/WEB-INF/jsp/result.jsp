@@ -104,7 +104,7 @@
                 <%
                     for(String tag : e.otherTags){
                         %>
-                    <span style="color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
+                    <span style="color:blue;text-decoration:underline;padding:2px; margin-right:2px;"><%=tag%></span>
                 <%
                     }
                 %>
