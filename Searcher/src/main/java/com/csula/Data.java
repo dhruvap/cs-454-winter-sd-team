@@ -155,6 +155,17 @@ public class Data {
         return o.get("url").toString();
     }
 
+    public double getScore(String docId ,String link){
+        DBCursor c  =termsInv.find(new BasicDBObject("doc.docid", docId));
+        while(c.hasNext()){
+            DBObject o = c.next();
+            if(o.get("link").toString().toLowerCase().contains(link.substring(link.lastIndexOf("\\")).toLowerCase())){
+                return Double.parseDouble(o.get("score").toString());
+            }
+        }
+        return 0;
+    }
+
 
 
 }
