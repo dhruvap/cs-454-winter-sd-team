@@ -47,7 +47,6 @@ public class Data {
     public void addScoreWordIndx(String word, double score){
 
 
-
         BasicDBObject updateQuery = new BasicDBObject("term", word);
         BasicDBObject setNewFieldQuery = new BasicDBObject().append("$set", new BasicDBObject().append("score", score));
 
@@ -56,11 +55,11 @@ public class Data {
     public void addScorePRIndx(String word, double score){
 
 
-
         BasicDBObject updateQuery = new BasicDBObject("link", word);
         BasicDBObject setNewFieldQuery = new BasicDBObject().append("$set", new BasicDBObject().append("score", score));
 
         termsInv.update(updateQuery, setNewFieldQuery);
+
     }
 
 
@@ -84,10 +83,10 @@ public class Data {
 
 
 
-
     }
 
     public void addToPageRankIndx(String word, int cnt, String doc, int totalLink){
+        //connect();
 
         BasicDBObject o = new BasicDBObject();
         o.put("link", word);
@@ -112,8 +111,6 @@ public class Data {
         termsInv.update(updateQuery, updateCommand);
 
 
-
-
     }
 
 
@@ -126,6 +123,7 @@ public class Data {
     }
 
     public List<ScoreFactor> getAllTermsForScoring(){
+
         List<ScoreFactor> res =new ArrayList<ScoreFactor>();
         DBCursor cursor = terms.find();
         while(cursor.hasNext()){
@@ -141,6 +139,7 @@ public class Data {
     }
 
     public List<ScoreFactor> getAllPRLinksForScoring(){
+
         List<ScoreFactor> res =new ArrayList<ScoreFactor>();
         DBCursor cursor = termsInv.find();
         double totalRank = 0.0;
@@ -164,14 +163,15 @@ public class Data {
 
 
     public CrawlResult storeToDb(CrawlResult res){
-       // new Gson().
+
+        // new Gson().
         Map m = new HashMap();
         m.put("id", res.getId());
         m.put("fileLocation", res.getFileLocation());
         m.put("depth", res.getDepth());
         m.put("parentId", res.getParentId());
         m.put("resources", res.getParsedResource());
-        m.put("raw", res.getRaw());
+       // m.put("raw", res.getRaw());
         m.put("url", res.getResourceUrl());
         BasicDBObject o = new BasicDBObject("doc", m);
         doc.insert(o);
@@ -182,17 +182,22 @@ public class Data {
     public CrawlResult storeToMeta(CrawlResult res, Map metaMap){
        // new Gson().
 
+
         BasicDBObject o = new BasicDBObject("meta", metaMap);
         meta.insert(o);
+        con.close();
+        con = null;
         return res;
     }
 
     public void markVisited(String url, String id){
         // new Gson().
+
         Map<String,String> map = new HashMap<String, String>();
         map.put("url", url);
         map.put("id", id);
         BasicDBObject o = new BasicDBObject(map);
+
         link.insert(o);
     }
 

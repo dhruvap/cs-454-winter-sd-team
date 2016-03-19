@@ -10,6 +10,8 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+
 public class Extractor {
 
     public void extract(CrawlResult cr ){
