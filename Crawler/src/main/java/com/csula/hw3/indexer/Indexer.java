@@ -59,7 +59,7 @@ public class Indexer {
      public static Map<String,Integer>   crawlAndIndexPageRank(CrawlResult result, InputBean inputBean){
          Map<String,Integer> wordFreq = new HashMap<String, Integer>();
          for(String s : result.getParsedResource()){
-             boolean needToVisit = inputBean.isInsideDomain() && s.contains(inputBean.getUrlObj().getHost());
+             boolean needToVisit = true;
              if(needToVisit){
                  if(wordFreq.get(s.toLowerCase().trim()) != null){
                      int  cnt = wordFreq.get(s.toLowerCase().trim());
@@ -98,7 +98,7 @@ public class Indexer {
         long totalDoc = data.getTotalDocs();
         List<ScoreFactor> terms = data.getAllTermsForScoring();
             for(ScoreFactor e : terms){
-                double idf = calculateIdf(totalDoc, e.getCount());
+                double idf = calculateIdf(totalDoc, e.getCount())/10;
                 data.addScoreWordIndx(e.getTerm(), idf);
             }
 
@@ -111,13 +111,14 @@ public class Indexer {
             Data  data = Data.getObject();
             long totalDoc = data.getTotalDocs();
             List<ScoreFactor> terms = data.getAllPRLinksForScoring();
+            int t = terms.size();
             for(ScoreFactor e : terms){
                 //double idf = calculateIdf(totalDoc, e.getCount());
-                double idf = e.getRank()/ e.getCount();
+                double idf = 100 *((e.getRank() *e.getCount()) /(double) t );
                 data.addScorePRIndx(e.getTerm(), idf);
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex){
 
         }
     }
