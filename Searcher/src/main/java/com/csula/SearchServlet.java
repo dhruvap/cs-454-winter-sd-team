@@ -113,20 +113,27 @@ public class SearchServlet {
                     res = doOpProcess(null, data.search(query.trim()), new ArrayList<Data.SearchResult>());
                 }
 
+                for(Data.SearchResult e : res){
+                    e.link = data.getLink(e.docId);
+                    double s  = data.getScore(e.docId, e.link );
+                    if(s != 0){
+                        e.score = s;
+                        finRes.add(e);
+                    }
 
-                finRes.addAll(res);
+
+                }
+
                         Collections.sort(finRes, new Comparator<Data.SearchResult>() {
                     @Override
                     public int compare(Data.SearchResult o1, Data.SearchResult o2) {
-                        return (int)((o1.score.doubleValue() * 1000) - (o2.score.doubleValue() * 1000));
+                      return  o1.score.equals(o2.score) ? 0 : (( o1.score > o2.score)? -1 : 1);
                     }
                 } );
 
 
 
-                for(Data.SearchResult e : finRes){
-                    e.link = data.getLink(e.docId);
-                }
+
 
 
 
@@ -144,6 +151,7 @@ public class SearchServlet {
 
         ModelAndView modelAndView = new ModelAndView("result");
         modelAndView.addObject("res", finRes);
+        modelAndView.addObject("q", query);
         return modelAndView;
     }
 

@@ -77,7 +77,7 @@
 <form method="POST" action="Search.html">
     <div class="ui-widget">
         <label for="tags">Query: </label>
-        <input id="tags" name="q">
+        <input id="tags" name="q" value="<%=request.getAttribute("q") == null ? "" : request.getAttribute("q")%>" >
     </div>
     <input type="submit" value="search"/>
 
@@ -89,27 +89,31 @@
     List<Data.SearchResult> res = (List<Data.SearchResult>) request.getAttribute("res");
     if(res != null){
         %>
+        Search Results  : ( Found <%=res.size()%> results )<br/>
         <table>
 
 <%
         for(Data.SearchResult e : res){
         %>
             <tr><td>
-                <a class="previewLink"  onblur="unpreview()" href="#"><%=e.link%></a> ( <%=e.score%> )
+                <hr/>
+                <a class="previewLink"  onblur="unpreview()" href="<%=e.link%>" target="_blank"><%=e.link%></a> ( <%=e.score%> )
                 <br/>
                 <button onclick="preview('<%=e.link%>')">Preview</button>
                 <button onclick="unpreview()">Close Preview</button><br/>
-                Other Top 20 Tags Leading this search :<br/>
+                Other Tags Leading this search :<br/>
                 <div style="width: 500px;display :block;">
                 <%
                     for(String tag : e.otherTags){
                         %>
-                    <span style="color:blue;text-decoration:underline;padding:2px; margin-right:2px;"><%=tag%></span>
+                    <span style=";color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
                 <%
                     }
                 %>
                 </div>
-            </td></tr><br/>
+            </td>
+            </tr>
+            <br/>
             <%
 
         }
