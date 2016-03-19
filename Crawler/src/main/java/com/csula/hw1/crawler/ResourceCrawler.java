@@ -1,23 +1,19 @@
 package com.csula.hw1.crawler;
 
 import com.csula.hw3.indexer.Indexer;
+import com.uwyn.jhighlight.tools.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
-
 
 public class ResourceCrawler implements Callable<CrawlResult> {
 
@@ -33,36 +29,41 @@ public class ResourceCrawler implements Callable<CrawlResult> {
     private int depth;
     private String parentDocId;
 
-    private String path  ="D:\\cs 454-john tran\\Crawler\\data";
+    private String path  ="D:\\Dhruva\\Crawler\\src\\main\\data";
+
 
     @Override
     public CrawlResult call() throws Exception {
         CrawlResult res = null;
         try{
             Data data = Data.getObject();
-            URL uri = null;
+            File uri = null;
             try{
-                uri = new URL(url);
-                if(depth > inputBean.getDepth()){
+                uri = new File(url);
+                if(depth >= inputBean.getDepth()){
                     System.out.println("CANNOT CRAWL URL : ["+ url +"] AS IT MORE THAN DEPTH : ["+depth+"]..");
                     return res;
                 }
-            }catch (MalformedURLException ex){
-                return res;
             }catch (Exception ex){
                 ex.printStackTrace();
                 return res;
             }
 
-            boolean needToVisit = inputBean.isInsideDomain() && uri.getHost().contains(inputBean.getUrlObj().getHost());
+            boolean needToVisit = true;
             boolean alreadyVisited = data.isVisited(url) ;
 
             if(needToVisit && !alreadyVisited){
                 String inputLine;
                 String webpage = "";
                 System.out.println("URL : " + uri.toString());
+                FileReader fr = null;
+                try{
+                   fr =  new FileReader(uri);
+                }catch (Exception ex){
+                    return null;
+                }
                 BufferedReader in = new BufferedReader(
-                        new InputStreamReader(uri.openStream()));
+                       fr );
                 while ((inputLine = in.readLine()) != null){
                     webpage += inputLine;
                 }
@@ -102,14 +103,52 @@ public class ResourceCrawler implements Callable<CrawlResult> {
                     }
                 }
 
-                String filePath = path + "\\"+id+(ext);
+                String filePath = url;
 
-                FileWriter f = new FileWriter(filePath);
+              /*  FileWriter f = new FileWriter(filePath);
                 f.write(webpage);
                 f.close();
-
+*/
                 res.setFileLocation(filePath);
-                res.setParsedResource(findLinks(filePath));
+
+                Set<String> links = findLinks(filePath);
+                Set<String> toSave = new HashSet<String>();
+                String ori = null;
+                for(String s : links){
+                    s = StringEscapeUtils.unescapeHtml(s) ;
+                    if((s.startsWith("http:") || s.startsWith("https:")) || !(s.endsWith(".html") || s.endsWith(".htm"))  ){
+                        continue;
+                    }
+                    ori = s;
+                    String newStr = "";
+                    int  j = 0;
+                    while(s.startsWith("../")){
+                        j++;
+                        if(s.startsWith("../")){
+                            int  i = url.lastIndexOf("\\");
+                            if(i == -1){
+                                i = url.lastIndexOf("/");
+                            }
+                             if(i == -1){
+                                 newStr = url;
+                             }else {
+                                 newStr = url.substring(0,url.lastIndexOf("\\"));
+                             }
+
+                        }
+                        s = s.replaceFirst("../","");
+                    }
+                    String addStr =url;
+                    for(int x= 0; x<= j ;x++){
+                        int v = addStr.lastIndexOf("\\");
+
+                        addStr = addStr.substring(0, v != -1 ? v : addStr.length() -1);
+                    }
+                    toSave.add((addStr+"\\"+s).replaceAll("/","\\\\"));
+
+
+                }
+                res.setParsedResource(toSave);
 
                 data.markVisited(url, res.getId());
                 data.storeToDb(res);
@@ -141,8 +180,6 @@ public class ResourceCrawler implements Callable<CrawlResult> {
             }else  {
                 System.out.println("CANNOT CRAWL URL : ["+ url +"] AS IT IS NOT IN SAME DOMAIN..");
             }
-
-
         }catch (Exception ex){
             ex.printStackTrace();
         }
