@@ -3,10 +3,7 @@ package com.csula;
 import com.mongodb.*;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -14,7 +11,7 @@ public class Data {
     MongoClient con = null;
     private String hostname = "localhost";
     private int portnum = 27017;
-    private String dbname = "crawler";
+    private String dbname = "crawler-project-1";
     DB db = null;
     DBCollection doc;
     DBCollection terms;
@@ -25,6 +22,8 @@ public class Data {
     public Data() {
         connect();
     }
+
+
 
     public void connect()  {
         if (con == null) {
@@ -54,6 +53,11 @@ public class Data {
         public String term ;
         public String operator;
         public Double score;
+        public Double scoreWt;
+        public Double tfidf;
+        public Double tfidfWt;
+        public Double comb;
+        public Double combWt;
         public String link;
         public List<String> otherTags = new ArrayList<String>();
 
@@ -108,7 +112,8 @@ public class Data {
                 SearchResult res = new SearchResult();
                 String docId = e.get("docid").toString();
                 res.docId = docId;
-                res.score = score;
+                res.score = score ;
+                res.tfidf = score * Double.parseDouble(e.get("tf").toString());
                 res.term = word;
 
                 DBCursor innerCr = terms.find(new BasicDBObject("doc.docid", docId)).limit(20);
@@ -156,16 +161,55 @@ public class Data {
     }
 
     public double getScore(String docId ,String link){
-        DBCursor c  =termsInv.find(new BasicDBObject("doc.docid", docId));
+        DBCursor c  =termsInv.find(new BasicDBObject("link", link));
         while(c.hasNext()){
             DBObject o = c.next();
-            if(o.get("link").toString().toLowerCase().contains(link.substring(link.lastIndexOf("\\")).toLowerCase())){
                 return Double.parseDouble(o.get("score").toString());
-            }
         }
         return 0;
     }
 
+
+    public List<SearchResult> getTop(int limit){
+        DBCursor c  = termsInv.find().sort(new BasicDBObject("score", -1)).limit(limit);
+        List<SearchResult> sr = new ArrayList<SearchResult>();
+        while(c.hasNext()){
+            DBObject o = c.next();
+            SearchResult  e = new SearchResult();
+            e.link  = o.get("link").toString();
+            e.score = Double.parseDouble(o.get("score").toString());
+            sr.add(e);
+       }
+        Collections.sort(sr, new Comparator<SearchResult>() {
+            @Override
+            public int compare(SearchResult o1, SearchResult o2) {
+                return  o1.score.equals(o2.score) ? 0 : (( o1.score > o2.score)? -1 : 1);
+
+            }
+        });
+        return sr;
+    }
+
+
+    public static void main(String[] args) {
+        Data data = new Data();
+
+        DBCursor c = data.termsInv.find(new BasicDBObject());
+        while(c.hasNext()){
+
+        DBObject o = c.next();
+            BasicDBObject updateQuery = new BasicDBObject("link", o.get("link").toString());
+            double sc = Double.parseDouble(o.get("score").toString());
+            BasicDBObject setNewFieldQuery = new BasicDBObject().append("$set", new BasicDBObject().append("score", sc/(double)10));
+            data.termsInv.update(updateQuery, setNewFieldQuery);
+        }
+
+
+    data.con.close();;
+
+
+
+    }
 
 
 }
