@@ -77,7 +77,7 @@
 <form method="POST" action="Search.html">
     <div class="ui-widget">
         <label for="tags">Query: </label>
-        <input id="tags" name="q" value="<%=request.getAttribute("q") == null ? "" : request.getAttribute("q")%>" >
+        <input id="tags" style="height: 20px;width:300px;font-size: 15px;" name="q" value="<%=request.getAttribute("q") == null ? "" : request.getAttribute("q")%>" >
     </div>
     <input type="submit" value="search"/>
 
@@ -97,21 +97,10 @@
         %>
             <tr><td>
                 <hr/>
-                <a class="previewLink"  onblur="unpreview()" href="<%=e.link%>" target="_blank"><%=e.link%></a> ( <%=e.score%> )
+                <a class="previewLink"  onblur="unpreview()" href="<%=e.link%>" target="_blank"><%=e.link%></a> <br/>
+                ( LInk Anlaysis : <%=e.scoreWt%> , TFIDF : <%=e.tfidfWt%> ,  Combined : <%=e.combWt%> )
                 <br/>
-                <button onclick="preview('<%=e.link%>')">Preview</button>
-                <button onclick="unpreview()">Close Preview</button><br/>
-                Other Tags Leading this search :<br/>
-                <div style="width: 500px;display :block;">
-                <%
-                    for(String tag : e.otherTags){
-                        %>
-                    <span style=";color:blue;text-decoration:underline;padding:2px; margin-right:5px;"><%=tag%></span>
-                <%
-                    }
-                %>
-                </div>
-            </td>
+                            </td>
             </tr>
             <br/>
             <%
