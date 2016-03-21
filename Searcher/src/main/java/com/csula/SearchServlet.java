@@ -24,22 +24,8 @@ public class SearchServlet {
 
 
     @RequestMapping(value = "Search.html" , method = RequestMethod.GET)
-    public ModelAndView get(){
-        ModelAndView model = new ModelAndView("result");
-        model.addObject("top",  data.getTop(5));
-        return model;
-    }
-
-    @RequestMapping(value = "/Main.html" , method = RequestMethod.GET)
-    public ModelAndView getIndex(){
-        ModelAndView model = new ModelAndView("main");
-        model.addObject("top",  data.getTop(5));
-        return model;
-    }
-
-    @RequestMapping(value = "google.html")
-    private String demo(){
-        return "google-demo";
+    public String get(){
+        return "result";
     }
 
 
@@ -156,12 +142,14 @@ public class SearchServlet {
                     }
 
 
+
+
                 }
 
                         Collections.sort(finRes, new Comparator<Data.SearchResult>() {
                     @Override
                     public int compare(Data.SearchResult o1, Data.SearchResult o2) {
-                      return  o1.score.equals(o2.score) ? 0 : (( o1.score > o2.score)? -1 : 1);
+                      return  o1.score.equals(o2.score) ? 0 : (( o1.scoreWt > o2.scoreWt)? -1 : 1);
                     }
                 } );
 
