@@ -14,6 +14,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 @Controller
@@ -22,8 +24,22 @@ public class SearchServlet {
 
 
     @RequestMapping(value = "Search.html" , method = RequestMethod.GET)
-    public String get(){
-        return "result";
+    public ModelAndView get(){
+        ModelAndView model = new ModelAndView("result");
+        model.addObject("top",  data.getTop(5));
+        return model;
+    }
+
+    @RequestMapping(value = "/Main.html" , method = RequestMethod.GET)
+    public ModelAndView getIndex(){
+        ModelAndView model = new ModelAndView("main");
+        model.addObject("top",  data.getTop(5));
+        return model;
+    }
+
+    @RequestMapping(value = "google.html")
+    private String demo(){
+        return "google-demo";
     }
 
 
@@ -117,7 +133,25 @@ public class SearchServlet {
                     e.link = data.getLink(e.docId);
                     double s  = data.getScore(e.docId, e.link );
                     if(s != 0){
+                        MathContext mc = new MathContext(4);
                         e.score = s;
+                        Double linkrank=  s;
+                        BigDecimal bd1 = new BigDecimal(linkrank);
+                        BigDecimal bd2 = new BigDecimal(0.3d);
+                        BigDecimal result1 = bd1.multiply(bd2,mc);
+
+                        BigDecimal bd3 = new BigDecimal(e.tfidf);
+                        BigDecimal bd4 = new BigDecimal(0.7d);
+                        BigDecimal result2 = bd3.multiply(bd4,mc);
+
+                        BigDecimal sum=result1.add(result2, mc);
+
+
+
+                        e.tfidfWt = result2.doubleValue();
+                        e.scoreWt = result1.doubleValue();
+                        e.comb = (e.tfidf * 0.7) + ( e.score * 0.3);
+                        e.combWt = sum.doubleValue();
                         finRes.add(e);
                     }
 
