@@ -1,11 +1,8 @@
 package com.csula.hw1.crawler;
 
-import java.io.File;
 import java.net.URL;
 
-/**
- * Created by Satyam Soni on 2/13/2016.
- */
+
 public class InputBean {
 
     private int depth = -1;
@@ -14,7 +11,7 @@ public class InputBean {
 
     private String url;
 
-    private File urlObj;
+    private URL urlObj;
 
     private String domain;
 
@@ -33,11 +30,11 @@ public class InputBean {
 
     private boolean insideDomain = false;
 
-    public File getUrlObj() {
+    public URL getUrlObj() {
         return urlObj;
     }
 
-    public void setUrlObj(File urlObj) {
+    public void setUrlObj(URL urlObj) {
         this.urlObj = urlObj;
     }
 
